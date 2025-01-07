@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ApolloWrapper } from "../lib/apollo-wrapper";
 import { Geist, Geist_Mono } from "next/font/google";
+import {Toaster} from "react-hot-toast";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -29,6 +30,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <Toaster/>
         {/* <div className="mb-10">
           <h1 className="md:text-6xl text-4xl lg:text-8xl font-bold text-center  relative z-50 text-white pt-10">
             <Link href="/">Budget Tracker</Link>

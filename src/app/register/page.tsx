@@ -1,14 +1,20 @@
 "use client";
 
-import { useState } from 'react'
+import { useState } from "react";
+import { useMutation } from "@apollo/client";
 import Link from "next/link";
 import RadioButton from "../../components/iu/radiobutton/page";
 import InputField from "../../components/iu/inputfield/page";
+import SIGN_UP_USER from "../../graphql/mutations/singupUser";
+import { navigateToHome } from "../actions";
+import { toast } from "react-hot-toast";
 
 export default function SignUpPage() {
+  const [signUpUser, { loading, error, data }] = useMutation(SIGN_UP_USER);
   const [signUpData, setSignUpData] = useState({
     name: "",
     username: "",
+    email: "",
     password: "",
     gender: "",
   });
@@ -31,7 +37,28 @@ export default function SignUpPage() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(signUpData);
+    const { name, username, email, password, gender } = signUpData;
+    try {
+      await signUpUser({
+        variables: {
+          name,
+          username,
+          email,
+          password,
+          gender,
+        },
+      });
+      navigateToHome();
+    } catch (submitError) {
+      console.log("Error caught:", submitError);
+      // Cast submitError as an instance of Error
+      if (submitError instanceof Error) {
+        console.log(submitError.message); // Log the message
+        return toast.error(submitError.message); // Pass the message to the toast
+      } else {
+        console.log("Unknown error:", submitError);
+      }
+    }
   };
 
   return (
@@ -60,7 +87,13 @@ export default function SignUpPage() {
                 value={signUpData.username}
                 onChange={handleChange}
               />
-
+              <InputField
+                label="Email"
+                id="email"
+                name="email"
+                value={signUpData.email}
+                onChange={handleChange}
+              />
               <InputField
                 label="Password"
                 id="password"
@@ -92,8 +125,9 @@ export default function SignUpPage() {
                 <button
                   type="submit"
                   className="w-full bg-black text-white p-2 rounded-md hover:bg-gray-800 focus:outline-none focus:bg-black  focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={loading}
                 >
-                  Sign Up
+                  {loading ? "Loading..." : "Sign Up"}
                 </button>
               </div>
             </form>

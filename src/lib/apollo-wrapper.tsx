@@ -8,13 +8,13 @@ import {
 
 function makeClient() {
   const httpLink = new HttpLink({
-    uri: "http://localhost:4000/",
+    uri: "/graphql", //URL FROM THE PROXY
+    credentials: "include",
   });
 
   return new ApolloClient({
     cache: new InMemoryCache(),
     link: httpLink,
-    credentials: "include",
   });
 }
 
