@@ -4,15 +4,13 @@ import { cookies } from "next/headers";
 // This function can be marked `async` if using `await` inside
 export async function middleware(request: NextRequest) {
   const cookieStore = await cookies()
-  const token = cookieStore.get('token')
 
-  const res = await fetch("http://localhost:4000/graphql", {
+  const res = await fetch("http://localhost:3000/graphql", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${token?.value}`,
+      Cookie: cookieStore?.toString()
     },
-    credentials: "include",
     body: JSON.stringify({
       query: `
         query getUserAuthenticated {
